@@ -1,0 +1,10 @@
+[project]
+name = "hermes-web-backend-trafilatura"
+version = "1.0.0"
+description = "Local, free web_extract backend for Hermes Agent using trafilatura. No API key."
+license = "MIT"
+requires-python = ">=3.9"
+dependencies = [
+    "trafilatura>=2.0.0,<3",
+    "httpx",
+]

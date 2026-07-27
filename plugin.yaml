@@ -1,0 +1,7 @@
+name: trafilatura
+version: 1.0.0
+description: "Local, free web_extract backend using trafilatura. No API key, no cloud call, no third-party data path — HTML in, markdown out."
+author: Prince Garth
+kind: backend
+provides_web_providers:
+  - trafilatura

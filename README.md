@@ -7,7 +7,7 @@ Does not render JavaScript — JS-heavy pages will fail extraction (see error me
 ## Install
 
 ```bash
-hermes plugins install <your-github>/hermes-web-backend-trafilatura --enable
+hermes plugins install PrinceGarth/hermes-web-backend-trafilatura --enable
 ```
 
 Then set:

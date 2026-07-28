@@ -10,7 +10,13 @@ Does not render JavaScript — JS-heavy pages will fail extraction (see error me
 hermes plugins install PrinceGarth/hermes-web-backend-trafilatura --enable
 ```
 
-Then set:
+Then:
+- run `hermes tools`
+- select "Reconfigure an existing tool's provider or API key"
+- go to "Web Search & Scraping"
+- Then select the Trafilatura provider
+
+Or manually set in ~/.hermes/config.yaml:
 
 ```yaml
 web:

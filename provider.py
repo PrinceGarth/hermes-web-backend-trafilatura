@@ -114,7 +114,7 @@ class TrafilaturaExtractProvider(WebSearchProvider):
 
     @property
     def display_name(self) -> str:
-        return "Trafilatura (local, free, extract only)"
+        return "Trafilatura (trafilatura)"
 
     def is_available(self) -> bool:
         try:
@@ -130,7 +130,7 @@ class TrafilaturaExtractProvider(WebSearchProvider):
     def get_setup_schema(self) -> Dict[str, Any]:
         return {
             "name": self.display_name,
-            "badge": "free",
+            "badge": "free · no key · self-hosted · extract only",
             "tag": (
                 "Local static-HTML extraction via trafilatura — no API key, "
                 "no cloud call. Self-installs on first use. Extract only, no "

@@ -23,6 +23,72 @@ _USER_AGENT = (
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 )
 
+_self_install_attempted = False
+
+
+def _ensure_trafilatura():
+    """Import trafilatura, self-installing once into Hermes' own venv if missing.
+
+    Third-party plugins have no hook into ``hermes tools``' install wizard
+    (that dispatch is a hardcoded if/elif on core provider names) — this
+    mirrors core's own lazy-install pattern (``tools/lazy_deps.py``) instead
+    of leaving the user to run a manual pip command.
+
+    Deliberately NOT done in :meth:`is_available`, which must stay a cheap,
+    network-free check (it runs on every ``hermes tools`` paint).
+    """
+    global _self_install_attempted
+    try:
+        import trafilatura
+
+        return trafilatura
+    except ImportError:
+        pass
+
+    if _self_install_attempted:
+        raise ImportError(
+            "trafilatura is not installed and a self-install attempt already "
+            "failed this run. Install manually: "
+            "uv pip install --python <hermes venv python> trafilatura"
+        )
+    _self_install_attempted = True
+
+    import shutil
+    import subprocess
+    import sys
+
+    logger.info("trafilatura not found — attempting self-install into Hermes' venv")
+
+    uv = shutil.which("uv")
+    cmd = (
+        [uv, "pip", "install", "--python", sys.executable, "trafilatura"]
+        if uv
+        else [sys.executable, "-m", "pip", "install", "trafilatura"]
+    )
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+
+    if result.returncode != 0 and not uv:
+        # uv-created venvs ship without pip — bootstrap it, then retry once.
+        subprocess.run(
+            [sys.executable, "-m", "ensurepip", "--upgrade", "--default-pip"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+
+    if result.returncode != 0:
+        logger.warning("trafilatura self-install failed: %s", result.stderr.strip()[-500:])
+        raise ImportError(
+            f"trafilatura self-install failed (exit {result.returncode}). "
+            f"Install manually: uv pip install --python {sys.executable} trafilatura"
+        )
+
+    logger.info("trafilatura installed successfully")
+    import trafilatura
+
+    return trafilatura
+
 
 async def _ssrf_redirect_guard(response):
     """Re-validate each redirect target — a public URL can 302 to
@@ -48,7 +114,7 @@ class TrafilaturaExtractProvider(WebSearchProvider):
 
     @property
     def display_name(self) -> str:
-        return "Trafilatura (local)"
+        return "Trafilatura (local, free, extract only)"
 
     def is_available(self) -> bool:
         try:
@@ -61,12 +127,28 @@ class TrafilaturaExtractProvider(WebSearchProvider):
     def supports_search(self) -> bool:
         return False
 
+    def get_setup_schema(self) -> Dict[str, Any]:
+        return {
+            "name": self.display_name,
+            "badge": "free",
+            "tag": (
+                "Local static-HTML extraction via trafilatura — no API key, "
+                "no cloud call. Self-installs on first use. Extract only, no "
+                "search; does not render JavaScript."
+            ),
+            "env_vars": [],
+        }
+
     def supports_extract(self) -> bool:
         return True
 
     async def extract(self, urls: List[str], **kwargs: Any) -> List[Dict[str, Any]]:
-        import trafilatura
         from tools.url_safety import create_ssrf_safe_async_client
+
+        try:
+            trafilatura = _ensure_trafilatura()
+        except ImportError as exc:
+            return [{"url": url, "title": "", "content": "", "error": str(exc)} for url in urls]
 
         results: List[Dict[str, Any]] = []
 

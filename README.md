@@ -19,7 +19,8 @@ web:
 
 ## Requirements
 
-- `trafilatura` (`pip install trafilatura`)
+- `trafilatura` — installed automatically on first `web_extract` call if missing (self-installs into Hermes' own managed venv, mirroring how core lazily installs its own optional deps). No manual step needed.
+  - If self-install fails (offline, no `uv`/`pip` available, permissions), install it yourself: `uv pip install --python <hermes venv python> trafilatura`
 - `httpx` (already a Hermes dependency)
 
 ## How it works

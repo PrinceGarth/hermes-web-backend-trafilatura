@@ -131,11 +131,7 @@ class TrafilaturaExtractProvider(WebSearchProvider):
         return {
             "name": self.display_name,
             "badge": "free · no key · self-hosted · extract only",
-            "tag": (
-                "Local static-HTML extraction via trafilatura — no API key, "
-                "no cloud call. Self-installs on first use. Extract only, no "
-                "search; does not render JavaScript."
-            ),
+            "tag": "Static-HTML extraction, self-installs on first use. No API key, no cloud call.",
             "env_vars": [],
         }
 

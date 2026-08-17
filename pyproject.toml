@@ -1,10 +1,11 @@
 [project]
 name = "hermes-web-backend-trafilatura"
-version = "1.0.0"
-description = "Local, free web_extract backend for Hermes Agent using trafilatura. No API key."
+version = "1.1.0"
+description = "Local HTML and PDF web_extract backend for Hermes Agent. No API key."
 license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "trafilatura>=2.0.0,<3",
+    "pypdf>=6.0.0,<7",
     "httpx",
 ]

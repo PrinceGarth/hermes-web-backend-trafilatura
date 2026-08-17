@@ -1,6 +1,6 @@
 name: trafilatura
-version: 1.0.0
-description: "Local, free web_extract backend using trafilatura. No API key, no cloud call, no third-party data path — HTML in, markdown out."
+version: 1.1.0
+description: "Local web_extract backend using trafilatura and pypdf. No API key or cloud reader — static HTML and text PDFs in, markdown out."
 author: Prince Garth
 kind: backend
 provides_web_providers:
